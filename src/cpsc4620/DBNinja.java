@@ -595,7 +595,7 @@ public final class DBNinja {
 
 
 			if(crusttype.equals(crust) && sizebase.equals(size)) {
-				System.out.println(crusttype);
+				System.out.println(size);
 				bp = record.getDouble("BasepriceToBusiness");
 			}
 		}

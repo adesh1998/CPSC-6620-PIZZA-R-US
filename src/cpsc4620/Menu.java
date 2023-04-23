@@ -13,6 +13,9 @@ import java.util.stream.Collectors;
 import init.DBIniter;
 import cpsc4620.DBConnector;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /*
  * This file is where the front end magic happens.
  * 
@@ -94,6 +97,17 @@ public class Menu {
 		System.out.println("Enter your option: ");
 	}
 
+	public static boolean CheckValidInput(String regex, String input) {
+		if(input.length()==0)
+			return false;
+		Pattern r = Pattern.compile(regex);
+		Matcher m = r.matcher(input);
+		if(m.results().count() != 0)
+			return true;
+		else
+			return false;
+	}
+
 
 	// allow for a new order to be placed
 	public static void EnterOrder() throws SQLException, IOException {
@@ -117,15 +131,27 @@ public class Menu {
 		 */
 
 
-		System.out.println("Is this order for a existing customer? (Y/N):");
-		String choice = reader.readLine().trim();
+		String choice = "N";
+		boolean validInp = false;
+		String regex = "^([YyNn]?)$";
+
+		while(!validInp) {
+			System.out.println("Is this order for a existing customer? (Y/N):");
+			choice = reader.readLine().trim();
+			validInp = CheckValidInput(regex, choice);
+			if(validInp)
+				validInp = true;
+			else
+				System.out.println("Provide only valid input");
+		}
+
 		int customerID=0;
 		if(choice.equals("N") || choice.equals("n")) {
 			Menu.EnterCustomer();
 			ArrayList<Customer> cus=new ArrayList<Customer>();
 			cus=DBNinja.getCustomerList();
 			customerID=cus.get(cus.size()-1).getCustID();
-			System.out.println(customerID);
+			// System.out.println(customerID);
 
 		} else {
 			System.out.println("Here is the list of existing customers: ");
@@ -133,12 +159,25 @@ public class Menu {
 			System.out.println("Which customer is this order for? Enter customer ID: ");
 			customerID = Integer.parseInt(reader.readLine());
 		}
+
 		System.out.println("What type of order is this?");
-		System.out.println("1. Dine-in\n2. Pick-up\n3. Delivery\nEnter Here:");
-		int type = Integer.parseInt(reader.readLine());
+		choice = "1";
+		int type = 1;
+		validInp = false;
+		regex = "^([1-3]?)$";
+		while(!validInp) {
+			System.out.println("1. Dine-in\n2. Pick-up\n3. Delivery\nEnter Here:");
+			choice = reader.readLine();
+			validInp = CheckValidInput(regex, choice);
+			if(validInp) {
+				validInp = true;
+				type = Integer.parseInt(choice);
+			} else
+				System.out.println("Provide only valid input");
+		}
 
 		int maxOrderID=DBNinja.getNextOrderID();
-		System.out.println(maxOrderID);
+		// System.out.println(maxOrderID);
 		String ordertype=null;
 		if(type==1){
 			System.out.println("Enter the table number  ");
@@ -184,8 +223,23 @@ public class Menu {
 
 			ArrayList<Integer> toppingList = new ArrayList<>();
 			boolean[] isToppingDouble = new boolean[17];
-			System.out.println("What size is the pizza\n1. Small\n2.Medium\n3.Large\n4.X-Large\nEnter Here:");
-			int s = Integer.parseInt(reader.readLine());
+			System.out.println("What size is the pizza?");
+			regex = "^[1-4]?$";
+			validInp = false;
+			int s=1;
+			while(!validInp)
+			{
+				System.out.println("1. Small\n2.Medium\n3.Large\n4.X-Large\nEnter Here:");
+				choice = reader.readLine();
+				validInp = CheckValidInput(regex, choice);
+				if(validInp)
+				{
+					validInp = true;
+					s = Integer.parseInt(choice);
+				}
+				else
+					System.out.println("Provide only valid input");
+			}
 			String size=null;
 			String crust=null;
 			if(s==1)
@@ -197,8 +251,23 @@ public class Menu {
 			else if(s==4)
 				size="x-large";
 
-			System.out.println("What crust for this pizza?\n1. Thin\n2.Original\n3.Pan\n4.Gluten-Free\nEnter Here:");
-			int c = Integer.parseInt(reader.readLine());
+			System.out.println("What crust for this pizza?");
+			regex = "^[1-4]$";
+			validInp = false;
+			int c = 1;
+			while (!validInp)
+			{
+				System.out.println("1. Thin\n2.Original\n3.Pan\n4.Gluten-Free\nEnter Here:");
+				choice = reader.readLine();
+				validInp = CheckValidInput(regex, choice);
+				if(validInp)
+				{
+					validInp = true;
+					c = Integer.parseInt(choice);
+				}
+				else
+					System.out.println("Provide only valid input");
+			}
 			if(c==1)
 				crust="Thin";
 			else if(c==2)
@@ -214,13 +283,28 @@ public class Menu {
 			int pizzaId=DBNinja.getMaxPizzaID();
 			System.out.println(pizzaId);
 			Pizza p=new Pizza(pizzaId+1,size,crust,maxOrderID,"Processing",timestamp,basepricecustomer,basepricebusiness);
-            System.out.println(p);
+			System.out.println(p);
 			int toppingFlag = 1;
 			ArrayList<Topping> toppingsList = new ArrayList<Topping>();
 			while (toppingFlag != -1) {
-				ViewInventoryLevels();
 				System.out.println("Select the required topping from the available list. Enter ToppingID. Enter -1 to stop adding toppings:");
-				int toppingID = Integer.parseInt(reader.readLine());
+				regex = "^(-1|1[0-7]|[1-9])$";
+				validInp = false;
+				int toppingID=-1;
+				while (!validInp)
+				{
+					ViewInventoryLevels();
+					choice = reader.readLine();
+					validInp = CheckValidInput(regex, choice);
+					if(validInp)
+					{
+						validInp = true;
+						toppingID = Integer.parseInt(choice);
+					}
+					else
+						System.out.println("Provide only valid input");
+
+				}
 				if (toppingID != -1) {
 					Topping t=DBNinja.getToppingFromId(toppingID);
 					toppingsList=DBNinja.getInventory();
@@ -251,9 +335,20 @@ public class Menu {
 
 			System.out.println(p);
 			ArrayList<Integer> discountList = new ArrayList<Integer>();
-			System.out.println("Do you want to add discounts to this pizza? Enter (Y/N):");
-			String dischoice = reader.readLine();
-			if (dischoice.equals("Y") || dischoice.equals("y")) {
+
+			choice = "N";
+			validInp = false;
+			regex = "^([YyNn]?)$";
+			while(!validInp)
+			{
+				choice = reader.readLine();
+				validInp = CheckValidInput(regex, choice);
+				if(validInp)
+					validInp = true;
+				else
+					System.out.println("Provide only valid input");
+			}
+			if (choice.equals("Y") || choice.equals("y")) {
 //				String getDiscountssql = "SELECT * FROM discount";
 //				PreparedStatement dpreparedStatement = conn.prepareStatement(getDiscountssql);
 //				ResultSet discounts = dpreparedStatement.executeQuery();
@@ -364,7 +459,7 @@ public class Menu {
 		for(int i=0;i< orderDiscountmap.size();i++){
 			DBNinja.orderDiscountConnection(orderDiscountmap.get(i)[0],orderDiscountmap.get(i)[1]);
 		}
-			System.out.println();
+		System.out.println();
 
 
 		System.out.println("Finished adding order...Returning to menu...");
