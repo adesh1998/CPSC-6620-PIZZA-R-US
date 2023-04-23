@@ -283,9 +283,11 @@ public final class DBNinja {
 
 			preparedStatement.executeUpdate();
             String completed="Completed";
-			String updatePizzaStatement = "update pizza set PizzaState =  "+completed+"  where PizzaOrderID = " + o.getOrderID();
+			String updatePizzaStatement = "update pizza set PizzaState = ?  where PizzaOrderID = ?" ;
 
 			PreparedStatement pizzaPreparedStatement = conn.prepareStatement(updatePizzaStatement);
+			pizzaPreparedStatement.setString(1,"Completed");
+			pizzaPreparedStatement.setInt(2,o.getOrderID());
 
 			pizzaPreparedStatement.executeUpdate();
 		} catch (Exception e) {
@@ -417,12 +419,67 @@ public final class DBNinja {
 
 
 
+
 		/*
 		 * This function should return an arraylist of all of the orders.
 		 * Remember that in Java, we account for supertypes and subtypes
 		 * which means that when we create an arrayList of orders, that really
 		 * means we have an arrayList of dineinOrders, deliveryOrders, and pickupOrders.
 		 * 
+		 * Also, like toppings, whenever we print out the orders using menu function 4 and 5
+		 * these orders should print in order from newest to oldest.
+		 */
+
+
+		//DO NOT FORGET TO CLOSE YOUR CONNECTION
+		conn.close();
+		return orders;
+	}
+
+	public static ArrayList<Order> getCurrentOrders(int status) throws SQLException, IOException {
+		ArrayList<Order> orders = new ArrayList<Order>();
+
+		try {
+			connect_to_db();
+
+			String selectQuery = "select * from ordert";
+			if (status==0) {
+				selectQuery += " where IsCompleted = " + status;
+			}
+			selectQuery += " order by OrdertTimeStamp desc;";
+
+			Statement statement = conn.createStatement();
+
+			ResultSet record = statement.executeQuery(selectQuery);
+
+			while (record.next()) {
+				Integer orderId = record.getInt("OrdertID");
+				String orderType = record.getString("OrdertType");
+				Integer customerId = record.getInt("OrdertCustomerID");
+				Double orderCost = record.getDouble("OrdertPriceToCustomer");
+				Double orderPrice = record.getDouble("OrdertPriceToBusiness");
+				String orderTimeStamp = record.getString("OrdertTimeStamp");
+				Integer OrderCompleteState = record.getInt("IsCompleted");
+
+				orders.add(
+						new Order(orderId, customerId, orderType, orderTimeStamp, orderCost, orderPrice, OrderCompleteState));
+
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+
+
+
+
+		/*
+		 * This function should return an arraylist of all of the orders.
+		 * Remember that in Java, we account for supertypes and subtypes
+		 * which means that when we create an arrayList of orders, that really
+		 * means we have an arrayList of dineinOrders, deliveryOrders, and pickupOrders.
+		 *
 		 * Also, like toppings, whenever we print out the orders using menu function 4 and 5
 		 * these orders should print in order from newest to oldest.
 		 */

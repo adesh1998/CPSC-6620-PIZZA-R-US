@@ -493,7 +493,7 @@ public class Menu {
 		 * 
 		 */
 
-		ArrayList<Order> orders = DBNinja.getCurrentOrders(null);
+		ArrayList<Order> orders = DBNinja.getCurrentOrders(0);
 		for (Order order : orders) {
 			System.out.println(order.toSimplePrint());
 		}
