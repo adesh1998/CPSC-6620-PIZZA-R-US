@@ -553,7 +553,7 @@ public class Menu {
 					Map<Integer, Order> resultMap = orders.stream().collect(Collectors.toMap(x -> x.getOrderID(), x -> x));
 					resultMap.get(orderID);
 
-					System.out.println(resultMap.get(orderID).toSimplePrint());
+					System.out.println(resultMap.get(orderID).toString());
 				}
 
 
@@ -633,14 +633,11 @@ public class Menu {
 		Menu.ViewInventoryLevels();
 		System.out.println("Enter ID of the topping you wish to add to the Inventory: ");
 		int toppingID = Integer.parseInt(reader.readLine());
+		Topping t= DBNinja.getToppingFromId(toppingID);
 		System.out.println("Enter the quantity to add to the Inventory: ");
-		float quantity = Float.parseFloat(reader.readLine());
-		String sql = "UPDATE topping SET ToppingCurrentInvLvl = ToppingCurrentInvLvl+? WHERE ToppingID = ?";
-		Connection conn = DBConnector.make_connection();
-		PreparedStatement preparedStatement = conn.prepareStatement(sql);
-		preparedStatement.setFloat(1, quantity);
-		preparedStatement.setInt(2, toppingID);
-		preparedStatement.executeUpdate();
+		double quantity = Float.parseFloat(reader.readLine());
+		DBNinja.AddToInventory(t,quantity);
+
 	}
 
 	// A function that builds a pizza. Used in our add new order function
@@ -686,6 +683,25 @@ public class Menu {
 		 * 
 		 * You should ask the user which report to print
 		 */
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		System.out.println("Which report do you wish to print? Enter\n" +
+				"1. ToppingPopularity\n" +
+				"2. ProfitByPizza\n" +
+				"3. ProfitByOrderType");
+		Integer option = Integer.parseInt(reader.readLine());
+
+		switch (option) {
+			case 1:
+				DBNinja.printToppingPopReport();
+
+				break;
+			case 2:
+				DBNinja.printProfitByPizzaReport();
+				break;
+			case 3:
+				DBNinja.printProfitByOrderType();
+				break;
+		}
 	}
 
 }

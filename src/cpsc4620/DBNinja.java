@@ -311,6 +311,12 @@ public final class DBNinja {
 
 	public static void AddToInventory(Topping t, double toAdd) throws SQLException, IOException {
 		connect_to_db();
+		String sql = "UPDATE topping SET ToppingCurrentInvLvl = ToppingCurrentInvLvl+? WHERE ToppingID = ?";
+		Connection conn = DBConnector.make_connection();
+		PreparedStatement preparedStatement = conn.prepareStatement(sql);
+		preparedStatement.setDouble(1, toAdd);
+		preparedStatement.setInt(2, t.getTopID());
+		preparedStatement.executeUpdate();
 		/*
 		 * Adds toAdd amount of topping to topping t.
 		 */
@@ -323,7 +329,7 @@ public final class DBNinja {
 	public static void printInventory() throws SQLException, IOException {
 		connect_to_db();
 
-			String sql = "SELECT ToppingID, ToppingName, ToppingCurrentInvLvl FROM topping";
+			String sql = "SELECT ToppingID, ToppingName, ToppingCurrentInvLvl FROM topping order by ToppingName";
 			PreparedStatement preparedStatement = conn.prepareStatement(sql);
 			ResultSet results = preparedStatement.executeQuery();
 
@@ -676,6 +682,21 @@ public final class DBNinja {
 
 	public static void printToppingPopReport() throws SQLException, IOException {
 		connect_to_db();
+
+		String maxOrdSql = "SELECT * FROM ToppingPopularity";
+		PreparedStatement prepared = conn.prepareStatement(maxOrdSql);
+		ResultSet report = prepared.executeQuery();
+		int maxOrderID = -1;
+		System.out.printf("%-20s  %-4s %n", "Topping", "ToppingCount");
+		while (report.next()){
+			String topping = report.getString("Topping");
+			Integer toppingCount = report.getInt("ToppingCount");
+		    System.out.printf("%-20s  %-4s %n", topping, toppingCount);
+	}
+
+		//DO NOT FORGET TO CLOSE YOUR CONNECTION
+	   conn.close();
+
 		/*
 		 * Prints the ToppingPopularity view. Remember that these views
 		 * need to exist in your DB, so be sure you've run your createViews.sql
@@ -699,8 +720,23 @@ public final class DBNinja {
 		 * I'm not picky about how they print, just make sure it's readable.
 		 */
 
+		String maxOrdSql = "SELECT * FROM ProfitByPizza";
+		PreparedStatement prepared = conn.prepareStatement(maxOrdSql);
+		ResultSet report = prepared.executeQuery();
+		System.out.printf("%-15s  %-15s  %-10s %-30s%n", "Pizza Size", "Pizza Crust", "Profit", "Last Order Date");
+		while (report.next()) {
+
+			String size = report.getString("Pizza Size");
+			String crust = report.getString("Pizza Crust");
+			Double profit = report.getDouble("Profit");
+			String orderDate = report.getString("LastOrderDate");
+
+			System.out.printf("%-15s  %-15s  %-10s %-30s%n", size, crust, profit, orderDate);
+
+		}
 
 		//DO NOT FORGET TO CLOSE YOUR CONNECTION
+		conn.close();
 	}
 
 	public static void printProfitByOrderType() throws SQLException, IOException {
@@ -714,7 +750,26 @@ public final class DBNinja {
 		 */
 
 
+		String maxOrdSql = "SELECT * FROM ProfitByOrderType";
+		PreparedStatement prepared = conn.prepareStatement(maxOrdSql);
+		ResultSet report = prepared.executeQuery();
+		System.out.printf("%-15s  %-15s  %-18s %-18s %-8s%n", "Customer Type", "Order Month", "Total Order Price",
+				"Total Order Cost", "Profit");
+		System.out.printf("-----------------------------------------------------------------------------------\n");
+		while (report.next()) {
+
+			String customerType = report.getString("CustomerType");
+			String orderMonth = report.getString("OrderMonth");
+			Double totalPrice = report.getDouble("TotalOrderPrice");
+			Double totalCost = report.getDouble("TotalOrderCost");
+			Double profit = report.getDouble("Profit");
+			System.out.printf("%-15s  %-15s  %-18s %-18s %-8s%n", customerType, orderMonth, totalPrice,
+					totalCost, profit);
+
+		}
+
 		//DO NOT FORGET TO CLOSE YOUR CONNECTION
+		conn.close();
 	}
 
 
