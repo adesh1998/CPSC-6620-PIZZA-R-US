@@ -175,32 +175,40 @@ public class Menu {
 			} else
 				System.out.println("Provide only valid input");
 		}
-
-		int maxOrderID=DBNinja.getNextOrderID();
-		// System.out.println(maxOrderID);
-		String ordertype=null;
-		if(type==1){
-			System.out.println("Enter the table number  ");
-			Integer tableNumber = Integer.parseInt(reader.readLine());
-			ordertype="dinein";
-			DBNinja.dineIn(maxOrderID, tableNumber);
-		} else if(type==2){
-			DBNinja.updatePickUp(maxOrderID);
-			ordertype="pickup";
-		} else {
-			System.out.println("Enter the customer address ");
-			String customerAddress = reader.readLine();
-			ordertype="delivery";
-			DBNinja.updateDelivery(maxOrderID, customerAddress);
-		}
-
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 		String timestamp=dtf.format(now);
 
+		int maxOrderID=DBNinja.getNextOrderID();
+
+		String ordertype=null;
+		Order o=new Order(0,customerID,"abc",timestamp,0.0,0.0,0);
+		DBNinja.addOrder(o);
+
+		if(type==1){
+			System.out.println("Enter the table number  ");
+			Integer tableNumber = Integer.parseInt(reader.readLine());
+
+			ordertype="dinein";
+			o.setOrderType(ordertype);
+			DBNinja.dineIn(maxOrderID, tableNumber);
+		} else if(type==2){
+			ordertype="pickup";
+			o.setOrderType(ordertype);
+			DBNinja.updatePickUp(maxOrderID);
+		} else {
+			System.out.println("Enter the customer address ");
+			String customerAddress = reader.readLine();
+			ordertype="delivery";
+			o.setOrderType(ordertype);
+			DBNinja.updateDelivery(maxOrderID, customerAddress);
+		}
+
+
+
 		int orderId=DBNinja.getNextOrderID();
 
-		Order o=new Order(orderId,customerID,ordertype,timestamp,0.0,0.0,0);
+
 //		HashMap<Integer, Integer> pizzaDiscountmap = new HashMap<>();
 //		HashMap<Integer, Integer> orderDiscountmap = new HashMap<>();
 //		HashMap<Integer, List<Integer>> pizzatopping = new HashMap<>();
@@ -279,21 +287,22 @@ public class Menu {
 
 			double basepricecustomer=DBNinja.getBaseCustPrice(size,crust);
 			double basepricebusiness=DBNinja.getBaseBusPrice(size,crust);
-			System.out.println(basepricecustomer+" "+basepricebusiness);
+
 			int pizzaId=DBNinja.getMaxPizzaID();
-			System.out.println(pizzaId);
+
 			Pizza p=new Pizza(pizzaId+1,size,crust,maxOrderID,"Processing",timestamp,basepricecustomer,basepricebusiness);
-			System.out.println(p);
+
 			int toppingFlag = 1;
 			ArrayList<Topping> toppingsList = new ArrayList<Topping>();
 			while (toppingFlag != -1) {
-				System.out.println("Select the required topping from the available list. Enter ToppingID. Enter -1 to stop adding toppings:");
 				regex = "^(-1|1[0-7]|[1-9])$";
 				validInp = false;
 				int toppingID=-1;
 				while (!validInp)
 				{
 					ViewInventoryLevels();
+					System.out.println("Select the required topping from the available list. Enter ToppingID. Enter -1 to stop adding toppings:");
+
 					choice = reader.readLine();
 					validInp = CheckValidInput(regex, choice);
 					if(validInp)
@@ -311,7 +320,6 @@ public class Menu {
 					System.out.println("Do you want this topping in double amount? (Y/N)");
 					String damt = reader.readLine();
 					if(damt.equals("y") || damt.equals("Y")) {
-
 						DBNinja.useTopping(p,t,true);
 						p.addToppings(t,true);
 
@@ -326,14 +334,12 @@ public class Menu {
 						pizzatopping.add(mapping);
 
 					}
-					System.out.println(pizzatopping.get(0)[0]);
-					System.out.println(pizzatopping.get(0)[1]);
-					System.out.println(pizzatopping.get(0)[2]);
+
 				} else
 					toppingFlag = -1;
 			}
 
-			System.out.println(p);
+
 			ArrayList<Integer> discountList = new ArrayList<Integer>();
 
 			choice = "N";
@@ -341,6 +347,7 @@ public class Menu {
 			regex = "^([YyNn]?)$";
 			while(!validInp)
 			{
+				System.out.println("Do you want to add Discount to pizza? Enter y/n");
 				choice = reader.readLine();
 				validInp = CheckValidInput(regex, choice);
 				if(validInp)
@@ -379,20 +386,20 @@ public class Menu {
 //						discountList.add(DiscountID);
 						Integer mapping[] = {p.getPizzaID(),d.getDiscountID()};
 						pizzaDiscountmap.add(mapping);
-						System.out.println(pizzaDiscountmap.get(0));
+
 
 					} else
 						discountflag = -1;
 				}
 			}
-			System.out.println(p);
+
 			pricetocustomer=pricetocustomer+p.getCustPrice();
 			pricetobusiness=pricetobusiness+p.getBusPrice();
 			o.setCustPrice(pricetocustomer);
 			o.setBusPrice(pricetobusiness);
-			System.out.println(o);
+
             pizzas.add(p);
-//			DBNinja.addPizza(p);
+     		DBNinja.addPizza(p);
 //			System.out.println("Calling Map function");
 //			DBNinja.mapNames(maxOrderID, s, c, type, discountList, toppingList, isToppingDouble);
 			System.out.println("Do you want to add more pizzas? (Y/N):");
@@ -434,22 +441,18 @@ public class Menu {
 					}
 
 
-					Integer mapping[] = {o.getOrderID(),d1.getDiscountID()};
+					Integer mapping[] = {maxOrderID,d1.getDiscountID()};
 					orderDiscountmap.add(mapping);
-					System.out.println(orderDiscountmap.get(0)[0]);
-					System.out.println(orderDiscountmap.get(0)[1]);
 
-					System.out.println(custPrice);
 				} else
 					discountflag = -1;
 			}
 //			discountsArrayList.add(ordDiscountList);
 		}
-		System.out.println(o);
+
+		o.setOrderID(maxOrderID);
         DBNinja.addOrder(o);
-		for(Pizza pizza:pizzas){
-			DBNinja.addPizza(pizza);
-		}
+
 		for(int i=0;i< pizzatopping.size();i++){
 			DBNinja.pizzaToppingConnection(pizzatopping.get(i)[0],pizzatopping.get(i)[1],pizzatopping.get(i)[2]);
 		}
