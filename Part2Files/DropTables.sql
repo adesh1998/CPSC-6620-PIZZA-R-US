@@ -1,5 +1,5 @@
 use PIZZAS_R_US;
-DROP SCHEMA PIZZAS_R_US;
+
 DROP TABLE dinein;
 DROP TABLE delivery;
 DROP TABLE pickup;
@@ -12,3 +12,4 @@ DROP TABLE ordert;
 DROP TABLE customer;
 DROP TABLE baseprice;
 DROP TABLE topping;
+DROP SCHEMA PIZZAS_R_US;

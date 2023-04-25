@@ -31,7 +31,7 @@ VALUES('Pepperoni', 1.25, 0.2, 100, 100, 2, 2.75, 3.5, 4.5),
  
  INSERT INTO discount(DiscountName, IsPercent, DiscountValue) 
 VALUES("Employee", 1, 15), 
- ("Lunch Special Medium", 0, 2),
+ ("Lunch Special Medium", 0, 1),
  ("Lunch Special Large", 0, 2),
  ("Specialty Pizza", 0, 1.50),
  ("Gameday Special", 1, 20);

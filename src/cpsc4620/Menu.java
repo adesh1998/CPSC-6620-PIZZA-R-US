@@ -474,7 +474,7 @@ public class Menu {
 		/*
 		 * Simply print out all of the customers from the database. 
 		 */
-         System.out.println("Inside View customer");
+
 		Connection conn = DBConnector.make_connection();
 		if(conn != null) {
 			ArrayList<Customer> customers = null;
@@ -546,18 +546,16 @@ public class Menu {
 				for (Order order : orders) {
 					System.out.println(order.toSimplePrint());
 				}
-				reader.readLine();
-				System.out.println("Do you wish to see any order in detail? (Y?N): ");
-				int response = reader.read();
-				if(response == 'Y' || response == 'y') {
-					System.out.print("Which order do you wish to see in detail? Enter the order ID: ");
-					reader.readLine();
-					int orderID = Integer.parseInt(reader.readLine());
-					Map<Integer, Order> resultMap = orders.stream().collect(Collectors.toMap(x -> x.getOrderID(), x -> x));
-					resultMap.get(orderID);
 
-					System.out.println(resultMap.get(orderID).toString());
-				}
+
+				System.out.print("Which order do you wish to see in detail? Enter the order ID:\n ");
+				reader.readLine();
+				int orderID = Integer.parseInt(reader.readLine());
+				Map<Integer, Order> resultMap = orders.stream().collect(Collectors.toMap(x -> x.getOrderID(), x -> x));
+				resultMap.get(orderID);
+
+				System.out.println(resultMap.get(orderID).toString());
+
 
 
 			}
@@ -570,6 +568,13 @@ public class Menu {
 				for (Order order : orders) {
 					System.out.println(order.toSimplePrint());
 				}
+
+				System.out.print("Which order do you wish to see in detail? Enter the order ID:\n ");
+				int orderID = Integer.parseInt(reader.readLine());
+				Map<Integer, Order> resultMap = orders.stream().collect(Collectors.toMap(x -> x.getOrderID(), x -> x));
+				resultMap.get(orderID);
+
+				System.out.println(resultMap.get(orderID).toString());
 
 
 			}
@@ -592,27 +597,29 @@ public class Menu {
 		 */
 
 		ArrayList<Order> orders = DBNinja.getCurrentOrders(0);
-		for (Order order : orders) {
-			System.out.println(order.toSimplePrint());
-		}
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
-
-		System.out.println("Enter the order Id you wish to mark as completed :");
-		Integer orderId = Integer.parseInt(reader.readLine());
-		Order order=null;
-		int index=0;
-		for(int i=0;i< orders.size();i++){
-			if(orders.get(i).getOrderID()==orderId){
-				index=i;
+		if(orders.size()!=0) {
+			for (Order order : orders) {
+				System.out.println(order.toSimplePrint());
 			}
-		}
-		order=orders.get(index);
-		if(order.getIsComplete()!=1){
+			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+
+			System.out.println("Enter the order Id you wish to mark as completed :");
+			Integer orderId = Integer.parseInt(reader.readLine());
+			Order order = null;
+			int index = 0;
+			for (int i = 0; i < orders.size(); i++) {
+				if (orders.get(i).getOrderID() == orderId) {
+					index = i;
+				}
+			}
+			order = orders.get(index);
 			DBNinja.CompleteOrder(order);
-		} else{
-			System.out.println("Order is already completed");
 		}
+		else{
+			System.out.println("Every order is already completed");
+		}
+
 
 
 	}
