@@ -319,7 +319,7 @@ public class Menu {
 					toppingsList=DBNinja.getInventory();
 					System.out.println("Do you want this topping in double amount? (Y/N)");
 					String damt = reader.readLine();
-					if(damt.equals("y") || damt.equals("Y")) {
+					if("y".equals(damt) || "Y".equals(damt)) {
 						DBNinja.useTopping(p,t,true);
 						p.addToppings(t,true);
 
@@ -404,13 +404,13 @@ public class Menu {
 //			DBNinja.mapNames(maxOrderID, s, c, type, discountList, toppingList, isToppingDouble);
 			System.out.println("Do you want to add more pizzas? (Y/N):");
 			String addPizza = reader.readLine();
-			if(addPizza.equals("N") || addPizza.equals("n"))
+			if("N".equals(addPizza) || "n".equals(addPizza))
 				flag = -1;
 		}
 
 		System.out.println("Do you want to add discounts to this order? Enter (Y/N):");
 		String ordDischoice = reader.readLine();
-		if (ordDischoice.equals("Y") || ordDischoice.equals("y")) {
+		if ("Y".equals(ordDischoice) || "y".equals(ordDischoice)) {
 //			String getDiscountssql = "SELECT * FROM discount";
 //			PreparedStatement dpreparedStatement = conn.prepareStatement(getDiscountssql);
 //			ResultSet discounts = dpreparedStatement.executeQuery();
