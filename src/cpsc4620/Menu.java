@@ -1,5 +1,6 @@
 package cpsc4620;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -45,7 +46,7 @@ public class Menu {
 		PrintMenu();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		DBIniter.init();
-		String option = reader.readLine();
+		String option = BoundedLineReader.readLine(reader, 5_000_000);
 		menu_option = Integer.parseInt(option);
 
 		while (menu_option != 9) {
@@ -77,7 +78,7 @@ public class Menu {
 					break;
 			}
 			PrintMenu();
-			option = reader.readLine();
+			option = BoundedLineReader.readLine(reader, 5_000_000);
 			menu_option = Integer.parseInt(option);
 		}
 
@@ -137,7 +138,7 @@ public class Menu {
 
 		while(!validInp) {
 			System.out.println("Is this order for a existing customer? (Y/N):");
-			choice = reader.readLine().trim();
+			choice = BoundedLineReader.readLine(reader, 5_000_000).trim();
 			validInp = CheckValidInput(regex, choice);
 			if(validInp)
 				validInp = true;
@@ -157,7 +158,7 @@ public class Menu {
 			System.out.println("Here is the list of existing customers: ");
 			viewCustomers();
 			System.out.println("Which customer is this order for? Enter customer ID: ");
-			customerID = Integer.parseInt(reader.readLine());
+			customerID = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 		}
 
 		System.out.println("What type of order is this?");
@@ -167,7 +168,7 @@ public class Menu {
 		regex = "^([1-3]?)$";
 		while(!validInp) {
 			System.out.println("1. Dine-in\n2. Pick-up\n3. Delivery\nEnter Here:");
-			choice = reader.readLine();
+			choice = BoundedLineReader.readLine(reader, 5_000_000);
 			validInp = CheckValidInput(regex, choice);
 			if(validInp) {
 				validInp = true;
@@ -187,7 +188,7 @@ public class Menu {
 
 		if(type==1){
 			System.out.println("Enter the table number  ");
-			Integer tableNumber = Integer.parseInt(reader.readLine());
+			Integer tableNumber = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 
 			ordertype="dinein";
 			o.setOrderType(ordertype);
@@ -198,7 +199,7 @@ public class Menu {
 			DBNinja.updatePickUp(maxOrderID);
 		} else {
 			System.out.println("Enter the customer address ");
-			String customerAddress = reader.readLine();
+			String customerAddress = BoundedLineReader.readLine(reader, 5_000_000);
 			ordertype="delivery";
 			o.setOrderType(ordertype);
 			DBNinja.updateDelivery(maxOrderID, customerAddress);
@@ -238,7 +239,7 @@ public class Menu {
 			while(!validInp)
 			{
 				System.out.println("1. Small\n2.Medium\n3.Large\n4.X-Large\nEnter Here:");
-				choice = reader.readLine();
+				choice = BoundedLineReader.readLine(reader, 5_000_000);
 				validInp = CheckValidInput(regex, choice);
 				if(validInp)
 				{
@@ -266,7 +267,7 @@ public class Menu {
 			while (!validInp)
 			{
 				System.out.println("1. Thin\n2.Original\n3.Pan\n4.Gluten-Free\nEnter Here:");
-				choice = reader.readLine();
+				choice = BoundedLineReader.readLine(reader, 5_000_000);
 				validInp = CheckValidInput(regex, choice);
 				if(validInp)
 				{
@@ -303,7 +304,7 @@ public class Menu {
 					ViewInventoryLevels();
 					System.out.println("Select the required topping from the available list. Enter ToppingID. Enter -1 to stop adding toppings:");
 
-					choice = reader.readLine();
+					choice = BoundedLineReader.readLine(reader, 5_000_000);
 					validInp = CheckValidInput(regex, choice);
 					if(validInp)
 					{
@@ -318,7 +319,7 @@ public class Menu {
 					Topping t=DBNinja.getToppingFromId(toppingID);
 					toppingsList=DBNinja.getInventory();
 					System.out.println("Do you want this topping in double amount? (Y/N)");
-					String damt = reader.readLine();
+					String damt = BoundedLineReader.readLine(reader, 5_000_000);
 					if(damt.equals("y") || damt.equals("Y")) {
 						DBNinja.useTopping(p,t,true);
 						p.addToppings(t,true);
@@ -348,7 +349,7 @@ public class Menu {
 			while(!validInp)
 			{
 				System.out.println("Do you want to add Discount to pizza? Enter y/n");
-				choice = reader.readLine();
+				choice = BoundedLineReader.readLine(reader, 5_000_000);
 				validInp = CheckValidInput(regex, choice);
 				if(validInp)
 					validInp = true;
@@ -369,7 +370,7 @@ public class Menu {
 						System.out.println(discount.toString());
 					}
 					System.out.println("Select the required discount from the available list. Enter DiscountID. Enter -1 to stop adding discounts:");
-					int DiscountID = Integer.parseInt(reader.readLine());
+					int DiscountID = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 					double custPrice1=p.getCustPrice();
 					if (DiscountID != -1) {
 						for (Discount discount:disc) {
@@ -403,13 +404,13 @@ public class Menu {
 //			System.out.println("Calling Map function");
 //			DBNinja.mapNames(maxOrderID, s, c, type, discountList, toppingList, isToppingDouble);
 			System.out.println("Do you want to add more pizzas? (Y/N):");
-			String addPizza = reader.readLine();
+			String addPizza = BoundedLineReader.readLine(reader, 5_000_000);
 			if(addPizza.equals("N") || addPizza.equals("n"))
 				flag = -1;
 		}
 
 		System.out.println("Do you want to add discounts to this order? Enter (Y/N):");
-		String ordDischoice = reader.readLine();
+		String ordDischoice = BoundedLineReader.readLine(reader, 5_000_000);
 		if (ordDischoice.equals("Y") || ordDischoice.equals("y")) {
 //			String getDiscountssql = "SELECT * FROM discount";
 //			PreparedStatement dpreparedStatement = conn.prepareStatement(getDiscountssql);
@@ -424,7 +425,7 @@ public class Menu {
 					System.out.println(discount.toString());
 				}
 				System.out.println("Select the required discount from the available list. Enter DiscountID. Enter -1 to stop adding discounts:");
-				int DiscountID = Integer.parseInt(reader.readLine());
+				int DiscountID = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 				double custPrice=o.getCustPrice();
 
 				if (DiscountID != -1) {
@@ -505,10 +506,10 @@ public class Menu {
 		Connection conn = DBConnector.make_connection();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Please Enter the Customer name (First Name <space> Last Name): ");
-		String fullName = reader.readLine();
+		String fullName = BoundedLineReader.readLine(reader, 5_000_000);
 		String[] names = fullName.trim().split("\\s+");
 		System.out.println("Please Enter the Customer Mobile Number (XXXXXXXXXX): ");
-		String phone = reader.readLine();
+		String phone = BoundedLineReader.readLine(reader, 5_000_000);
 		Customer customer=new Customer(0,names[0],names[1],phone);
 		DBNinja.addCustomer(customer);
 
@@ -549,8 +550,8 @@ public class Menu {
 
 
 				System.out.print("Which order do you wish to see in detail? Enter the order ID:\n ");
-				reader.readLine();
-				int orderID = Integer.parseInt(reader.readLine());
+				BoundedLineReader.readLine(reader, 5_000_000);
+				int orderID = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 				Map<Integer, Order> resultMap = orders.stream().collect(Collectors.toMap(x -> x.getOrderID(), x -> x));
 				resultMap.get(orderID);
 
@@ -562,15 +563,15 @@ public class Menu {
 			if (choice == 'b' || choice == 'B') {
 
 				System.out.print("Enter the date in YYYY-MM-DD format: ");
-				reader.readLine();
-				String dateString = reader.readLine();
+				BoundedLineReader.readLine(reader, 5_000_000);
+				String dateString = BoundedLineReader.readLine(reader, 5_000_000);
 				orders = DBNinja.getCurrentOrders(dateString);
 				for (Order order : orders) {
 					System.out.println(order.toSimplePrint());
 				}
 
 				System.out.print("Which order do you wish to see in detail? Enter the order ID:\n ");
-				int orderID = Integer.parseInt(reader.readLine());
+				int orderID = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 				Map<Integer, Order> resultMap = orders.stream().collect(Collectors.toMap(x -> x.getOrderID(), x -> x));
 				resultMap.get(orderID);
 
@@ -605,7 +606,7 @@ public class Menu {
 
 
 			System.out.println("Enter the order Id you wish to mark as completed :");
-			Integer orderId = Integer.parseInt(reader.readLine());
+			Integer orderId = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 			Order order = null;
 			int index = 0;
 			for (int i = 0; i < orders.size(); i++) {
@@ -642,10 +643,10 @@ public class Menu {
 		System.out.println("Current Inventory Levels:");
 		Menu.ViewInventoryLevels();
 		System.out.println("Enter ID of the topping you wish to add to the Inventory: ");
-		int toppingID = Integer.parseInt(reader.readLine());
+		int toppingID = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 		Topping t= DBNinja.getToppingFromId(toppingID);
 		System.out.println("Enter the quantity to add to the Inventory: ");
-		double quantity = Float.parseFloat(reader.readLine());
+		double quantity = Float.parseFloat(BoundedLineReader.readLine(reader, 5_000_000));
 		DBNinja.AddToInventory(t,quantity);
 
 	}
@@ -698,7 +699,7 @@ public class Menu {
 				"1. ToppingPopularity\n" +
 				"2. ProfitByPizza\n" +
 				"3. ProfitByOrderType");
-		Integer option = Integer.parseInt(reader.readLine());
+		Integer option = Integer.parseInt(BoundedLineReader.readLine(reader, 5_000_000));
 
 		switch (option) {
 			case 1:
