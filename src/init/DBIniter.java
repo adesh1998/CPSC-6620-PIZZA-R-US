@@ -1,5 +1,6 @@
 package init;
 
+import io.github.pixee.security.BoundedLineReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -157,7 +158,7 @@ public class DBIniter <T>
 		        
 		        String check;
 		        boolean exists = false;
-		        while((check = br.readLine()) != null)
+		        while((check = BoundedLineReader.readLine(br, 5_000_000)) != null)
 		        {
 		        	if(check.contains("//INITNUM"))
 		        		exists=true;
@@ -183,7 +184,7 @@ public class DBIniter <T>
 			        
 			        String codeline;
 			        int fileCode = 0;
-			        while((codeline = br3.readLine()) != null)
+			        while((codeline = BoundedLineReader.readLine(br3, 5_000_000)) != null)
 			        {
 			        	if(codeline.contains("//INITNUM"))
 			        	{
@@ -196,7 +197,7 @@ public class DBIniter <T>
 			        String directory = "sfasdfsdfsadfasdfsdfasdfsadfasdfsadf";
 			        
 			        String line = "";
-			        while((line = br2.readLine()) != null)
+			        while((line = BoundedLineReader.readLine(br2, 5_000_000)) != null)
 			        {
 			        	if(line.contains("//INITNUM"))
 			        	{
