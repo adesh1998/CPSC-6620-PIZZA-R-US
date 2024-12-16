@@ -10,6 +10,13 @@ The application supports features such as placing orders, managing toppings, dis
 
 ---
 
+## Screenshots
+### ER Diagram
+
+ <img src="PIZZA_STORE.png" align="center" height="500"></img>
+
+---
+
 ## Features
 
 ### Core Functionalities
@@ -132,15 +139,6 @@ CREATE TABLE pizza (
 ## Execution
 
 Run the application using the `Main` class, which provides a menu-driven interface for interacting with the system. Select options to add orders, manage inventory, generate reports, and more.
-
----
-
-## Screenshots
-### ER Diagram
-*(Leave space for ER Diagram image)*
-
-### Application Interface
-*(Leave space for screenshots of application interface)*
 
 ---
 
