@@ -146,6 +146,3 @@ Run the application using the `Main` class, which provides a menu-driven interfa
 Feel free to fork the repository and contribute to the project by submitting pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
 ---
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
