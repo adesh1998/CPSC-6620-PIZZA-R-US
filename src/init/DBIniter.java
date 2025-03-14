@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Random;
@@ -148,7 +149,7 @@ public class DBIniter <T>
 				
 			}
 			
-			Random r = new Random();
+			Random r = new SecureRandom();
 			int codeNum = r.nextInt(9999999);
 			try 
 			{
